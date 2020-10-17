@@ -152,6 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   material: {fileID: 2100000, guid: edfa7a944e6e37a41a404329a6bca664, type: 2}
+<<<<<<< HEAD
   maxDepth: 3
   childScale: 0.5
   meshes:
@@ -161,6 +162,14 @@ MonoBehaviour:
   spawnProbability: 1
   maxRotationSpeed: 50
   maxTwist: 15
+=======
+  maxDepth: 5
+  childScale: 0.5
+  meshes:
+  - {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+>>>>>>> 40b8d487d84fee193ced76f1cb7d7bf606233826
 --- !u!4 &600734251
 Transform:
   m_ObjectHideFlags: 0
@@ -169,12 +178,17 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 600734249}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+<<<<<<< HEAD
   m_LocalPosition: {x: -2.7, y: 1, z: -7.25}
+=======
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+>>>>>>> 40b8d487d84fee193ced76f1cb7d7bf606233826
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!1 &894864959
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,6 +297,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
+>>>>>>> 40b8d487d84fee193ced76f1cb7d7bf606233826
 --- !u!1 &1323573150
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,7 +468,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1719751719}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+<<<<<<< HEAD
   m_LocalPosition: {x: 0, y: 2.01, z: -13.28}
+=======
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+>>>>>>> 40b8d487d84fee193ced76f1cb7d7bf606233826
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
