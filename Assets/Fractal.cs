@@ -13,7 +13,6 @@ public class Fractal : MonoBehaviour
     public Mesh[] meshes;
     private Material[,] materials;
 
-<<<<<<< HEAD
     public float spawnProbability;
 
     public float maxRotationSpeed;
@@ -22,9 +21,6 @@ public class Fractal : MonoBehaviour
 
     public float maxTwist;
 
-
-=======
->>>>>>> 40b8d487d84fee193ced76f1cb7d7bf606233826
     private static Vector3[] childDirections = 
     { 
         Vector3.up, 
@@ -50,15 +46,12 @@ public class Fractal : MonoBehaviour
         {
             InitializeMaterials();
         }
-<<<<<<< HEAD
+
         rotationSpeed = Random.Range(-maxRotationSpeed, maxRotationSpeed);
         gameObject.AddComponent<MeshFilter>().mesh = meshes[Random.Range(0, meshes.Length)];
         gameObject.AddComponent<MeshRenderer>().material = materials[depth, Random.Range(0,2)];
         transform.Rotate(Random.Range(-maxTwist, maxTwist), 0f, 0f);
-=======
-        gameObject.AddComponent<MeshFilter>().mesh = meshes[Random.Range(0, meshes.Length)];
-        gameObject.AddComponent<MeshRenderer>().material = materials[depth, Random.Range(0,2)];       
->>>>>>> 40b8d487d84fee193ced76f1cb7d7bf606233826
+
         if (depth < maxDepth)
         {
             StartCoroutine(CreateChildren());
@@ -86,12 +79,10 @@ public class Fractal : MonoBehaviour
 
     private void Initialize(Fractal parent, int childIndex)
     {
-<<<<<<< HEAD
         maxTwist = parent.maxTwist;
         maxRotationSpeed = parent.maxRotationSpeed;
         spawnProbability = parent.spawnProbability;
-=======
->>>>>>> 40b8d487d84fee193ced76f1cb7d7bf606233826
+
         meshes = parent.meshes;
         mesh = parent.mesh;
         materials = parent.materials;
