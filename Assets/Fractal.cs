@@ -46,21 +46,11 @@ public class Fractal : MonoBehaviour
         {
             InitializeMaterials();
         }
-<<<<<<< HEAD
-
-=======
         
->>>>>>> 980b463f1fb8e0f347f5968450bd008d9b1a8f75
         rotationSpeed = Random.Range(-maxRotationSpeed, maxRotationSpeed);
         gameObject.AddComponent<MeshFilter>().mesh = meshes[Random.Range(0, meshes.Length)];
         gameObject.AddComponent<MeshRenderer>().material = materials[depth, Random.Range(0,2)];
         transform.Rotate(Random.Range(-maxTwist, maxTwist), 0f, 0f);
-<<<<<<< HEAD
-=======
-        
-        gameObject.AddComponent<MeshFilter>().mesh = meshes[Random.Range(0, meshes.Length)];
-        gameObject.AddComponent<MeshRenderer>().material = materials[depth, Random.Range(0,2)];       
->>>>>>> 980b463f1fb8e0f347f5968450bd008d9b1a8f75
 
         if (depth < maxDepth)
         {
