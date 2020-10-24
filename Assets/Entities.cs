@@ -7,7 +7,8 @@ using Unity.Mathematics;
 
 public class Entities : MonoBehaviour
 {
-    [SerializeField] private Mesh cubeMesh;
+    //[SerializeField] private Mesh cubeMesh;
+    [SerializeField] private Mesh[] cubeMesh;
     [SerializeField] private Material material;
 
     private void Start()
@@ -20,7 +21,7 @@ public class Entities : MonoBehaviour
             typeof(LocalToWorld) // Coordinate conversion
             );
 
-        NativeArray<Entity> entityArray = new NativeArray<Entity>(30000, Allocator.Temp);
+        NativeArray<Entity> entityArray = new NativeArray<Entity>(30, Allocator.Temp);
         entityManager.CreateEntity(entityArchetype, entityArray);
 
         for (int i = 0; i < entityArray.Length; i++)
@@ -28,13 +29,10 @@ public class Entities : MonoBehaviour
             Entity entity = entityArray[i];
             entityManager.SetComponentData(entity, new EntityComponent { componentFloat = UnityEngine.Random.Range(10f, 20f) });
             entityManager.SetComponentData(entity, new Translation { Value = new float3(UnityEngine.Random.Range(-500f, 500f), UnityEngine.Random.Range(-100f, 100f), (UnityEngine.Random.Range(-500f, 500f))) });
-            //entityManager.AddChunkComponentData(entity
-            //{ 
-
-            //}
+      
             entityManager.SetSharedComponentData(entity, new RenderMesh
             {
-                mesh = cubeMesh,
+                mesh = cubeMesh[UnityEngine.Random.Range(0, cubeMesh.Length)],
                 material = material,
             }
             ); ;
