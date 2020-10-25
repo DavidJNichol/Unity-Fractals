@@ -4,3 +4,7 @@ The goal is to generate procedural fractals with ECS optimization, hopefully uti
 Commit 1 - Generates cuboid fractals with 2 colors signifying depth. Uses simple batching. Able to produce a depth of 5 (5 child cubes generated per cube) before performance takes a big hit on a GTX 1080. 
 Commit 2 - Added more colors that interpolate. Improved batching amount. Generates both cubes and spheres on a random basis. Able to produce a depth of 6 before performance drops. 
 Commit 3 - Added more irregularity to the fractal generation. Various random meshes, a probability that the fractal will spawn a child, fractal rotations on update, and a random rotation value that each fractal will start with. 
+Commits 4-12 - Accidentally merging my code broke the whole project by changing internal Unity data. These commits were a string of fixing that.
+Commit 13 - Created a fresh version of my old project with no errors.
+Commit 14 - Introduced a working ECS demo alongside my fractal in the same scene to begin implementing my ECS code into my fractal code.
+Commit 15 - Started ECS implementation by adding variance in ECS mesh generation.
