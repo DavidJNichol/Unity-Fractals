@@ -21,7 +21,7 @@ public class Entities : MonoBehaviour
             typeof(LocalToWorld) // Coordinate conversion
             );
 
-        NativeArray<Entity> entityArray = new NativeArray<Entity>(30000, Allocator.Temp);
+        NativeArray<Entity> entityArray = new NativeArray<Entity>(cubeMesh.Length, Allocator.Temp);
         entityManager.CreateEntity(entityArchetype, entityArray);
 
         for (int i = 0; i < entityArray.Length; i++)

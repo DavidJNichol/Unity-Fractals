@@ -81,6 +81,17 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.physics": {
+      "version": "0.2.4-preview",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.1.2",
+        "com.unity.entities": "0.1.1-preview",
+        "com.unity.test-framework.performance": "1.0.9-preview"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.properties": {
       "version": "0.6.2-preview",
       "depth": 1,

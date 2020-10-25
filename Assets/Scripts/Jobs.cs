@@ -8,6 +8,7 @@ using Unity.Collections;
 public class Jobs : MonoBehaviour
 {
     [SerializeField] private bool useJobs;
+    [SerializeField] private int amountOfObjects;
     [SerializeField] private Transform prefabLime; //Init via inspector
     private List<Lime> limeList;
 
@@ -46,9 +47,9 @@ public class Jobs : MonoBehaviour
         limeList = new List<Lime>();
 
         // Instantiate and randomly position limes
-        for (int i = 0; i < 15000; i++)
+        for (int i = 0; i < amountOfObjects; i++)
         {
-            Transform limeTransform = Instantiate(prefabLime, new Vector3(UnityEngine.Random.Range(-12f, 12f), UnityEngine.Random.Range(-5f, 5f), UnityEngine.Random.Range(-8f, 8f)), Quaternion.identity);
+            Transform limeTransform = Instantiate(prefabLime, new Vector3(UnityEngine.Random.Range(-12f, 25f), UnityEngine.Random.Range(-5f, 30f), UnityEngine.Random.Range(-8f, 20f)), Quaternion.identity);
             limeList.Add(new Lime
             {
                 transform = limeTransform,
