@@ -8,3 +8,6 @@ Commits 4-12 - Accidentally merging my code broke the whole project by changing 
 Commit 13 - Created a fresh version of my old project with no errors.
 Commit 14 - Introduced a working ECS demo alongside my fractal in the same scene to begin implementing my ECS code into my fractal code.
 Commit 15 - Started ECS implementation by adding variance in ECS mesh generation.
+Commit 16 - Updated the README
+Commit 17 - Adds functional jobs demo to later blend into ECS integration.
+Commit 18- Merged main branch.
