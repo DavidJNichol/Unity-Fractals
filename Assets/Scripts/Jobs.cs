@@ -7,12 +7,11 @@ using Unity.Collections;
 
 public class Jobs : MonoBehaviour
 {
-    [SerializeField] private bool useJobs;
     [SerializeField] private int amountOfObjects;
     [SerializeField] private Transform prefabLime; //Init via inspector
     private List<Lime> limeList;
 
-    //JOB
+    //JOB    
     [BurstCompile]
     public struct ReallyToughParallelJob : IJobParallelFor
     {
@@ -48,7 +47,7 @@ public class Jobs : MonoBehaviour
 
         // Instantiate and randomly position limes
         for (int i = 0; i < amountOfObjects; i++)
-        {
+        {            
             Transform limeTransform = Instantiate(prefabLime, new Vector3(UnityEngine.Random.Range(-12f, 25f), UnityEngine.Random.Range(-5f, 30f), UnityEngine.Random.Range(-8f, 20f)), Quaternion.identity);
             limeList.Add(new Lime
             {

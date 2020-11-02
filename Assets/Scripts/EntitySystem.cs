@@ -1,13 +1,29 @@
-﻿using Unity.Entities;
+﻿using Unity.Burst;
+using Unity.Entities;
+using Unity.Jobs;
+using Unity.Mathematics;
+using UnityEngine;
 
-public class EntitySystem : ComponentSystem
+public class EntitySystem : JobComponentSystem
 {
-    protected override void OnUpdate()
+    [BurstCompile]
+    struct EntityJob : IJobForEach<EntityComponent>
     {
-        Entities.ForEach((ref EntityComponent entityComponent) =>
+        public float deltaTime; // not needed yet
+         
+        public void Execute(ref EntityComponent entityComponent)
+        {            
+            entityComponent.componentFloat = math.exp10(math.sqrt(entityComponent.componentFloat));
+        }
+    }
+
+    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    {
+        var job = new EntityJob()
         {
-            // Increment level by 1 per second
-            entityComponent.componentFloat += 1f;
-        });
+            deltaTime = Time.deltaTime            
+        };
+       
+        return job.Schedule(this, inputDeps);
     }
 }
