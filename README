@@ -18,3 +18,6 @@ Commit 22 - Updated README
 Commit 23 - Added a test class with the Unity job system mixed with ECS. There are many issues with this that will have to be sorted out.
 Commit 24 - Merged branch
 Commit 25 - Updated README
+Commit 26 - Added a player controller with first person camera attached. Updated scene with new skybox and new fractals.
+Commit 27 - Merged branch 
+Commit 28 - Updated README
