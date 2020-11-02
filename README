@@ -15,3 +15,6 @@ Commit 19 - Updated README
 Commit 20 - Added a job with ECS system demo.
 Commit 21 - Merged branch
 Commit 22 - Updated README
+Commit 23 - Added a test class with the Unity job system mixed with ECS. There are many issues with this that will have to be sorted out.
+Commit 24 - Merged branch
+Commit 25 - Updated README
