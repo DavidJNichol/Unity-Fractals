@@ -18,8 +18,8 @@ public class Test : MonoBehaviour
     [BurstCompile]
     public struct JobStruct : IJobParallelFor
     {
-        //public Mesh theMesh;
-        //public Material theMaterial;
+        public Mesh theMesh;
+        public Material theMaterial;
 
         public int amountOfEntities;
 
@@ -41,12 +41,12 @@ public class Test : MonoBehaviour
                 entityManager.SetComponentData(entity, new EntityComponent { componentFloat = UnityEngine.Random.Range(10f, 20f) });
                 entityManager.SetComponentData(entity, new Translation { Value = new float3(UnityEngine.Random.Range(-500f, 500f), UnityEngine.Random.Range(-100f, 100f), (UnityEngine.Random.Range(-500f, 500f))) });
 
-                //entityManager.SetSharedComponentData(entity, new RenderMesh
-                //{
-                //    mesh = theMesh,
-                //    material = theMaterial
-                //}
-                //); ;
+            entityManager.SetSharedComponentData(entity, new RenderMesh
+            {
+                mesh = theMesh,
+                material = theMaterial
+            }
+            ); ;
             entityArray.Dispose();
         }
     }
@@ -56,8 +56,8 @@ public class Test : MonoBehaviour
         JobStruct jobStruct = new JobStruct
         {
             amountOfEntities = this.amountOfEntities,
-            //theMesh = cubeMesh,
-            //theMaterial = material
+            ////theMesh = cubeMesh,
+            ////theMaterial = material
         };
 
         JobHandle jobHandle = jobStruct.Schedule(amountOfEntities, 100);
