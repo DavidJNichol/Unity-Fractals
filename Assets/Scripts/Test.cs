@@ -46,7 +46,7 @@ public class Test : MonoBehaviour
                 mesh = theMesh,
                 material = theMaterial
             }
-            ); ;
+            ); 
             entityArray.Dispose();
         }
     }
