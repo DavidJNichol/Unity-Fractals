@@ -24,3 +24,6 @@ Commit 28 - Updated README
 Commit 29 - Added a Test class for ECS with Jobs
 Commit 30 - Merged branch
 Commit 31 - Updated README
+Commit 32 - Adds Fractal ECS classes and a basic implementation of ECS that suits the creation of fractals.
+Commit 33 - Merged branch
+Commit 34 - Updated README
