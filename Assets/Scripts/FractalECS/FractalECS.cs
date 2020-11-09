@@ -11,12 +11,22 @@ public class FractalECS : MonoBehaviour
     [SerializeField] private Mesh[] cubeMesh;
     [SerializeField] private Material[] material;
     [SerializeField] private int maxDepth;
+    [SerializeField] private float childScale;
+    [SerializeField] private int maxTwist;
 
     private float3 entityPosition;
     private float amountOfEntities;
     private NativeArray<Entity> entityArray;
     private EntityArchetype entityArchetype = new EntityArchetype(); 
     private EntityManager entityManager;
+
+    private float spawnProbability;
+    private float maxRotationSpeed;
+    
+
+    private System.Random rand = new System.Random();
+
+    private quaternion defaultQuaternion = new quaternion(1, 1, 1, 1);
     
     private static Vector3[] childDirections = {  // TO USE IN THE FUTURE
         Vector3.up,
@@ -42,10 +52,11 @@ public class FractalECS : MonoBehaviour
 
         entityManager = World.Active.EntityManager;
 
+        // TRANSLATION, ROTATION AND SCALE CAN POSSIBLY BE DONE WITH JUST LOCALTOWORLD
         entityArchetype = entityManager.CreateArchetype(
           typeof(FractalComponent), typeof(Rotation), //Component class, Rotation
           typeof(Translation), typeof(RenderMesh),  // Rendering, Location
-          typeof(LocalToWorld) // Coordinate conversion
+          typeof(LocalToWorld), typeof(Scale)  // Coordinate conversion
           );        
 
         entityPosition = this.transform.localPosition;
@@ -66,6 +77,18 @@ public class FractalECS : MonoBehaviour
                  Value = entityPosition // EntityPosition is this.transform.localposition
             }) ;
 
+            entityManager.SetComponentData(entity, new FractalComponent
+            {
+                radiansPerSecond = 5
+            });
+
+            entityManager.SetComponentData(entity, new Rotation
+            {
+                //Value = defaultQuaternion
+
+                Value = math.mul(math.normalize(defaultQuaternion), quaternion.AxisAngle(-maxTwist, (float)rand.Next(-maxTwist,maxTwist))) // Sets a random twist at start
+            });
+
             OffsetEntitySpawn(2); // Adds a gap of 2 units between each entity on the z axis 
 
             entityManager.SetSharedComponentData(entity, new RenderMesh
@@ -74,6 +97,11 @@ public class FractalECS : MonoBehaviour
                 material = material[UnityEngine.Random.Range(0, material.Length)], // Sets material to random out of the UI list
             }
             );
+
+            entityManager.SetComponentData(entity, new Scale
+            {
+                Value = childScale
+            });
         }      
         entityArray.Dispose(); // Empty native array since garbage collector does not handle it (IMPORTANT)
     }

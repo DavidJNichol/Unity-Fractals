@@ -414,9 +414,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cubeMesh:
   - {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
   material:
   - {fileID: 2100000, guid: 174e7977166824bf49a2c2f4b54fd066, type: 2}
-  maxDepth: 5
+  - {fileID: 2100000, guid: eba7c646abc914766b797ce6e6b6aef8, type: 2}
+  maxDepth: 4
+  childScale: 1
+  maxTwist: 50
 --- !u!4 &596097642
 Transform:
   m_ObjectHideFlags: 0

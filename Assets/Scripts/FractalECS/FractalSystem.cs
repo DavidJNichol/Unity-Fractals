@@ -5,30 +5,16 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public class FractalSystem : JobComponentSystem
+public class FractalSystem : ComponentSystem
 {
-    FractalComponent fractalComponent;
-
-    [BurstCompile]
-    struct FractalJobSystem : IJobForEach<Rotation>
+    // Kinda slow, but works!
+    protected override void OnUpdate()
     {
-        public quaternion rotationQuaternion;
-
-        public void Execute(ref Rotation rotation)
+        Entities.ForEach((ref Rotation rotation, ref FractalComponent fractalComponent) =>
         {
-            rotation.Value = rotationQuaternion;
-        }
-    }
-
-    protected override JobHandle OnUpdate(JobHandle inputDeps)
-    {
-        var job = new FractalJobSystem()
-        {
-            rotationQuaternion  = new quaternion(0, 50 * Time.deltaTime, 0, .5f)
-        };
-
-        
-
-        return job.Schedule(this, inputDeps);
+            var deltaTime = Time.deltaTime;
+            rotation.Value = math.mul(math.normalize(rotation.Value),
+                quaternion.AxisAngle(Vector3.right, fractalComponent.radiansPerSecond * deltaTime));
+        });
     }
 }
