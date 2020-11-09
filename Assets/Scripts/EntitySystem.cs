@@ -1,29 +1,18 @@
-﻿using Unity.Burst;
-using Unity.Entities;
-using Unity.Jobs;
-using Unity.Mathematics;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class EntitySystem : JobComponentSystem
+public class EntitySystem : MonoBehaviour
 {
-    [BurstCompile]
-    struct EntityJob : IJobForEach<EntityComponent>
+    // Start is called before the first frame update
+    void Start()
     {
-        public float deltaTime; // not needed yet
-         
-        public void Execute(ref EntityComponent entityComponent)
-        {            
-            entityComponent.componentFloat = math.exp10(math.sqrt(entityComponent.componentFloat));
-        }
+        
     }
 
-    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    // Update is called once per frame
+    void Update()
     {
-        var job = new EntityJob()
-        {
-            deltaTime = Time.deltaTime            
-        };
-       
-        return job.Schedule(this, inputDeps);
+        
     }
 }

@@ -4,31 +4,21 @@ using Unity.Transforms;
 using Unity.Collections;
 using Unity.Rendering;
 using Unity.Mathematics;
-using Unity.Burst;
-using Unity.Jobs;
-using UnityEngine.Jobs;
-using UnityEngine.UIElements;
-using Unity.Physics.Extensions;
-using UnityEditor.Experimental.GraphView;
+using UnityEngine.Animations;
 
 public class FractalECS : MonoBehaviour
 {
-    //[SerializeField] private Mesh cubeMesh;
     [SerializeField] private Mesh[] cubeMesh;
     [SerializeField] private Material[] material;
     [SerializeField] private int maxDepth;
 
     private float3 entityPosition;
-    //[SerializeField] private float childScale;
-    //[SerializeField] private float spawnProbability;
-    //[SerializeField] private int maxRotationSpeed;
-    //[SerializeField] private float maxTwist;
-
     private float amountOfEntities;
-    private System.Random rand;
-    private int depth;
-
-    private static Vector3[] childDirections = {
+    private NativeArray<Entity> entityArray;
+    private EntityArchetype entityArchetype = new EntityArchetype(); 
+    private EntityManager entityManager;
+    
+    private static Vector3[] childDirections = {  // TO USE IN THE FUTURE
         Vector3.up,
         Vector3.right,
         Vector3.left,
@@ -36,7 +26,7 @@ public class FractalECS : MonoBehaviour
         Vector3.back
     };
 
-    private static Quaternion[] childOrientations = {
+    private static Quaternion[] childOrientations = {  // TO USE IN THE FUTURE
         Quaternion.identity,
         Quaternion.Euler(0f, 0f, -90f),
         Quaternion.Euler(0f, 0f, 90f),
@@ -46,79 +36,56 @@ public class FractalECS : MonoBehaviour
 
     private void Start()
     {
-        amountOfEntities = math.pow(5, maxDepth); // how many fractal children are spawned is 5^maxDepth
+        amountOfEntities = math.pow(5, maxDepth); // how many fractal children are spawned is 5^(maxDepth)
+
+        entityArray= new NativeArray<Entity>((int)amountOfEntities, Allocator.Temp);
+
+        entityManager = World.Active.EntityManager;
+
+        entityArchetype = entityManager.CreateArchetype(
+          typeof(FractalComponent), typeof(Rotation), //Component class, Rotation
+          typeof(Translation), typeof(RenderMesh),  // Rendering, Location
+          typeof(LocalToWorld) // Coordinate conversion
+          );        
+
         entityPosition = this.transform.localPosition;
 
-
-        if (depth < maxDepth)
-        {
-            CreateEntities(this, depth);
-        }
+        CreateEntities(entityArchetype, 0); // Main entity creation
     }
 
-    private void CreateEntities(FractalECS parent, int childIndex)
-    {
-        
-        EntityManager entityManager = World.Active.EntityManager;
-
-        EntityArchetype entityArchetype = entityManager.CreateArchetype(
-            typeof(EntityComponent), typeof(Rotation),
-            typeof(Translation), typeof(RenderMesh),  // Rendering
-            typeof(LocalToWorld), typeof(Scale) // Coordinate conversion
-            );
-
-        NativeArray<Entity> entityArray = new NativeArray<Entity>((int)amountOfEntities, Allocator.Temp);
-        entityManager.CreateEntity(entityArchetype, entityArray);
+    private void CreateEntities(EntityArchetype entityArchetype, int childIndex)
+    {        
+        entityManager.CreateEntity(entityArchetype, entityArray); // Entity spawn
 
         for (int i = 0; i < amountOfEntities; i++)
         {
-            Entity entity = entityArray[i];
+            Entity entity = entityArray[i]; // Entity is created and added to array 
 
             entityManager.SetComponentData(entity, new Translation
             {              
-                 Value = entityPosition // That last .5 is the equiv of childScale, can be turned into a serialized variable in future
+                 Value = entityPosition // EntityPosition is this.transform.localposition
             }) ;
 
-            entityManager.SetComponentData(entity, new Scale
-            {
-                //Value = .5f
-            });
-
-            entityPosition.z += 2;
-
-            //entityManager.SetComponentData(entity, new Rotation
-            //{
-            //    Value = childOrientations[childIndex]
-            //});
+            OffsetEntitySpawn(2); // Adds a gap of 2 units between each entity on the z axis 
 
             entityManager.SetSharedComponentData(entity, new RenderMesh
             {
-                mesh = cubeMesh[UnityEngine.Random.Range(0, cubeMesh.Length)],
-                material = material[UnityEngine.Random.Range(0, material.Length)],
+                mesh = cubeMesh[UnityEngine.Random.Range(0, cubeMesh.Length)], // Sets mesh to random out of the UI list
+                material = material[UnityEngine.Random.Range(0, material.Length)], // Sets material to random out of the UI list
             }
             );
-
-            if(depth < maxDepth-1)
-                depth++;
-        }
-        entityArray.Dispose();
+        }      
+        entityArray.Dispose(); // Empty native array since garbage collector does not handle it (IMPORTANT)
     }
 
-    //meshes = parent.meshes;
-    //materials = parent.materials;
-    //maxDepth = parent.maxDepth;
-    //depth = parent.depth + 1;
-    //childScale = parent.childScale;
-    //spawnProbability = parent.spawnProbability;
-    //maxRotationSpeed = parent.maxRotationSpeed;
-    //maxTwist = parent.maxTwist;
-    //transform.parent = parent.transform;
-    //transform.localScale = Vector3.one* childScale;
-    //  transform.localPosition =
-    //	childDirections[childIndex] * (0.5f + 0.5f * childScale);
-    //transform.localRotation = childOrientations[childIndex];
+    private void OffsetEntitySpawn(int amount)
+    {
+        entityPosition.z += amount;
+    }
 
 }
+
+
 
 
 

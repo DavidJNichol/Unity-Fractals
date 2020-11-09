@@ -1,9 +1,10 @@
 ﻿using Unity.Entities;
-using UnityEngine;
+using Unity.Mathematics;
 
 public struct FractalComponent : IComponentData
 {
-	public float rotationSpeed;
+	public quaternion rotationSpeed;
 	public int depth;
 }
+
 

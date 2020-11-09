@@ -1,17 +1,34 @@
-﻿using Unity.Entities;
+﻿using Unity.Burst;
+using Unity.Entities;
+using Unity.Jobs;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
-public class FractalSystem : ComponentSystem
+public class FractalSystem : JobComponentSystem
 {
-    protected override void OnUpdate()
+    FractalComponent fractalComponent;
+
+    [BurstCompile]
+    struct FractalJobSystem : IJobForEach<Rotation>
     {
-        // Iterate through all entities containing a LevelComponent
-        Entities.ForEach((ref FractalComponent fractalComponent) =>
+        public quaternion rotationQuaternion;
+
+        public void Execute(ref Rotation rotation)
         {
-            // Increment level by 1 per second
-            fractalComponent.rotationSpeed += 5;
-        });
+            rotation.Value = rotationQuaternion;
+        }
     }
 
+    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    {
+        var job = new FractalJobSystem()
+        {
+            rotationQuaternion  = new quaternion(0, 50 * Time.deltaTime, 0, .5f)
+        };
 
+        
+
+        return job.Schedule(this, inputDeps);
+    }
 }
