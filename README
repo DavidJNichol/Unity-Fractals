@@ -30,3 +30,6 @@ Commit 34 - Updated README
 Commit 35 - Added a job system that performs a rotation on the ECS cube demo
 Commit 36 - Merged branch
 Commit 37 - Updated README
+Commit 38 - Fixed the super fast ECS rotation by decoupling it from the job system. Added a random rotation value the entities will start with.
+Commit 39 - Merged branch
+Commit 40 - Updated README
