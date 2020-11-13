@@ -33,3 +33,6 @@ Commit 37 - Updated README
 Commit 38 - Fixed the super fast ECS rotation by decoupling it from the job system. Added a random rotation value the entities will start with.
 Commit 39 - Merged branch
 Commit 40 - Updated README
+Commit 41 - Implements color interpolation as well as a more varied rotation per fractal entity.
+Commit 42 - Merged branch
+Commit 43 - Updated README
