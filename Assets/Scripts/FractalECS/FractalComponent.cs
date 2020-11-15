@@ -1,18 +1,14 @@
-﻿using Unity.Collections;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
+﻿using Unity.Entities;
 
 public struct FractalComponent : IComponentData
 {
 	public float radiansPerSecond;
-	public int depth;
 
 	//parent entity, you can name it entity instead of value
 	//public Entity parentEntity;
 	//public Entity currentEntity;
 
-	//public NativeArray<Entity> entityArray;
+	//public Translation parentTranslation;
 
 	//public EntityManager entityManager;
 

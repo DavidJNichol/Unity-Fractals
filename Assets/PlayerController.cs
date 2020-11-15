@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     CharacterController characterController;
     private float movementSpeed;
+    public float sprintSpeed;
 
     Transform camTransform;
 
@@ -35,7 +36,7 @@ public class PlayerController : MonoBehaviour
         
         if(Input.GetKey(KeyCode.LeftShift))
         {
-            movementSpeed = 150;
+            movementSpeed = sprintSpeed;
         }
         else
         {
