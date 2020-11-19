@@ -36,3 +36,6 @@ Commit 40 - Updated README
 Commit 41 - Implements color interpolation as well as a more varied rotation per fractal entity.
 Commit 42 - Merged branch
 Commit 43 - Updated README
+Commit 45 - Adds a GameObject to Entity conversion demo, entity rotation multithreading with Jobs, and the start of a parent-child entity hierarchy. Huge fps boost because of multithreading!
+Commit 46 - Merged branch
+Commit 47 - Updated README
