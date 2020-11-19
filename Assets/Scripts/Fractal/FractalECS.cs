@@ -24,6 +24,8 @@ public class FractalECS : MonoBehaviour
     private int depth;
     Entity parent;
 
+    int index = 0;
+
     float4x4 loc;
 
     private System.Random rand = new System.Random();
@@ -31,14 +33,14 @@ public class FractalECS : MonoBehaviour
     private float startTime;
 
     private quaternion defaultQuaternion = new quaternion(1, 1, 1, 1);
-    
-    //private static Vector3[] childDirections = {  // TO USE IN THE FUTURE
-    //    Vector3.up,
-    //    Vector3.right,
-    //    Vector3.left,
-    //    Vector3.forward,
-    //    Vector3.back
-    //};
+
+    private static Vector3[] childDirections = {  // TO USE IN THE FUTURE
+        Vector3.up,
+        Vector3.right,
+        Vector3.left,
+        Vector3.forward,
+        Vector3.back
+    };
 
     //private static Quaternion[] childOrientations = {  // TO USE IN THE FUTURE
     //    Quaternion.identity,
@@ -78,7 +80,7 @@ public class FractalECS : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log(((Time.realtimeSinceStartup - startTime) * 1000f) + "ms"); // Start up time debug        
+        Debug.Log(("Startup Time: " + (Time.realtimeSinceStartup - startTime) * 1000f) + "ms"); // Start up time debug        
     }
 
     private void CreateEntities(EntityArchetype entityArchetype)
@@ -89,14 +91,14 @@ public class FractalECS : MonoBehaviour
         {            
             Entity entity = entityArray[i]; // Entity is created and added to array 
 
-            if(i > 0)
-            {
-                parent = entityArray[i - 1];
-            }
-            else
-            {
-                parent = entity;
-            }
+            //if(i > 0)
+            //{
+            //    parent = entityArray[i - 1];
+            //}
+            //else
+            //{
+            //    parent = entity;
+            //}
 
             InterpolateColor(i);
 
@@ -105,10 +107,18 @@ public class FractalECS : MonoBehaviour
                 Value = entityPosition // EntityPosition is this.transform.localposition
             });
 
+            if (index == 4)
+            {
+                index = 0;
+            }
+
             entityManager.SetComponentData(entity, new FractalComponent
             {
                 radiansPerSecond = 5, // Fractals rotate at a rate of 5 radians per second
+                translation = new float3(childDirections[index] * (0.5f + 0.5f * childScale))
             });
+
+            index++;
 
             // WE PROBABLY DON'T NEED THIS v
             entityManager.SetComponentData(entity, new LocalToWorld
@@ -123,7 +133,7 @@ public class FractalECS : MonoBehaviour
 
             entityManager.SetComponentData(entity, new Scale
             {
-                Value = childScale 
+                Value = 1
             });
 
             entityManager.SetComponentData(entity, new Parent

@@ -1,8 +1,20 @@
-﻿using Unity.Entities;
+﻿using System.Collections.Generic;
+using System.Numerics;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 
 public struct FractalComponent : IComponentData
 {
 	public float radiansPerSecond;
+
+	public float3 translation;
+
+	public int indexer;
+
+	//public NativeArraySharedValues<LocalToWorld> array;
+
+	// Try using a native array to store parent transforms
 
 	//parent entity, you can name it entity instead of value
 	//public Entity parentEntity;
