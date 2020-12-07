@@ -10,21 +10,29 @@ public struct FractalComponent : IComponentData
 
 	public float3 translation;
 
-	public int indexer;
+	public bool rotation;
 
-	//public NativeArraySharedValues<LocalToWorld> array;
+    public int indexer;
 
-	// Try using a native array to store parent transforms
+    public int indexer2;
 
-	//parent entity, you can name it entity instead of value
-	//public Entity parentEntity;
-	//public Entity currentEntity;
+    public bool weirdFractal;
 
-	//public Translation parentTranslation;
+    public Entity parent;
 
-	//public EntityManager entityManager;
+    //public NativeArraySharedValues<LocalToWorld> array;
 
-	//public Scale scale;
+    // Try using a native array to store parent transforms
+
+    //parent entity, you can name it entity instead of value
+    //public Entity parentEntity;
+    //public Entity currentEntity;
+
+    //public Translation parentTranslation;
+
+    //public EntityManager entityManager;
+
+    //public Scale scale;
 }
 
 

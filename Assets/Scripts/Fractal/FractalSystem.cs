@@ -25,21 +25,46 @@ using UnityEngine;
 public class FractalSystem : JobComponentSystem
 {
     [BurstCompile]
-    struct FractalJobSystem : IJobForEach<Rotation, FractalComponent, LocalToWorld, LocalToParent, Translation> // Gets each entity that has these 4 components attached
+    struct FractalJobSystem : IJobForEach<Rotation, FractalComponent, LocalToWorld> // Gets each entity that has these 4 components attached
     {
         public float deltaTime;
            
-        public void Execute(ref Rotation rotation, ref FractalComponent fractalComponent, ref LocalToWorld location, ref LocalToParent localToParent, ref Translation translation)
+        public void Execute(ref Rotation rotation, ref FractalComponent fractalComponent, ref LocalToWorld localToWorld)
         {
-            rotation.Value = math.mul(math.normalize(rotation.Value),
-            quaternion.AxisAngle(Vector3.right, fractalComponent.radiansPerSecond * deltaTime)); // Rotation quaternion math (rip Euler)            
+            if (fractalComponent.rotation)
+            {
+                rotation.Value = math.mul(math.normalize(rotation.Value),
+                quaternion.AxisAngle(Vector3.right, fractalComponent.radiansPerSecond * deltaTime)); // Rotation quaternion math (rip Euler)            
+            }
+            else
+            {
+                rotation.Value = quaternion.identity;
+            }            
 
-            if(fractalComponent.indexer < 1)
-                translation.Value += fractalComponent.translation;
+            if(fractalComponent.weirdFractal)
+            {
+                //translation.Value = LocalToWorld
 
-            fractalComponent.indexer++;
 
-            location.Value = localToParent.Value; // Sets localtoworld coords to localtoparent coords (localtoparent coords do not do anything for now, might be a conflict between LTW and LTP)
+                //if (fractalComponent.indexer2 == 0)
+                //{
+                //    if (fractalComponent.indexer % 2 == 0)
+                //        translation.Value += fractalComponent.translation * Vector3.up;
+                //    else if (fractalComponent.indexer % 3 == 0)
+                //        translation.Value += fractalComponent.translation * Vector3.right;
+                //    else if (fractalComponent.indexer % 4 == 0)
+                //        translation.Value += fractalComponent.translation * Vector3.down;
+                //    else if (fractalComponent.indexer % 5 == 0)
+                //        translation.Value += fractalComponent.translation * Vector3.left;
+                //    else
+                //        translation.Value += fractalComponent.translation * Vector3.forward;
+                //}
+
+                //fractalComponent.indexer++;
+                //fractalComponent.indexer2++;
+            }
+
+            //localToWorld.Value = localToParent.Value; // Sets localtoworld coords to localtoparent coords (localtoparent coords do not do anything for now, might be a conflict between LTW and LTP)
         }
     }
 
@@ -49,6 +74,8 @@ public class FractalSystem : JobComponentSystem
         {
             deltaTime = Time.deltaTime, // Acess Time class outside of the Job
         };
+
+        
 
         return job.Schedule(this, inputDeps); // Schedules job
     }
