@@ -41,28 +41,28 @@ public class FractalSystem : JobComponentSystem
                 rotation.Value = quaternion.identity;
             }            
 
-            if(fractalComponent.weirdFractal)
-            {
-                //translation.Value = LocalToWorld
+            //if(fractalComponent.weirdFractal)
+            //{
+            //    //translation.Value = LocalToWorld
 
 
-                //if (fractalComponent.indexer2 == 0)
-                //{
-                //    if (fractalComponent.indexer % 2 == 0)
-                //        translation.Value += fractalComponent.translation * Vector3.up;
-                //    else if (fractalComponent.indexer % 3 == 0)
-                //        translation.Value += fractalComponent.translation * Vector3.right;
-                //    else if (fractalComponent.indexer % 4 == 0)
-                //        translation.Value += fractalComponent.translation * Vector3.down;
-                //    else if (fractalComponent.indexer % 5 == 0)
-                //        translation.Value += fractalComponent.translation * Vector3.left;
-                //    else
-                //        translation.Value += fractalComponent.translation * Vector3.forward;
-                //}
+            //    //if (fractalComponent.indexer2 == 0)
+            //    //{
+            //    //    if (fractalComponent.indexer % 2 == 0)
+            //    //        translation.Value += fractalComponent.translation * Vector3.up;
+            //    //    else if (fractalComponent.indexer % 3 == 0)
+            //    //        translation.Value += fractalComponent.translation * Vector3.right;
+            //    //    else if (fractalComponent.indexer % 4 == 0)
+            //    //        translation.Value += fractalComponent.translation * Vector3.down;
+            //    //    else if (fractalComponent.indexer % 5 == 0)
+            //    //        translation.Value += fractalComponent.translation * Vector3.left;
+            //    //    else
+            //    //        translation.Value += fractalComponent.translation * Vector3.forward;
+            //    //}
 
-                //fractalComponent.indexer++;
-                //fractalComponent.indexer2++;
-            }
+            //    //fractalComponent.indexer++;
+            //    //fractalComponent.indexer2++;
+            //}
 
             //localToWorld.Value = localToParent.Value; // Sets localtoworld coords to localtoparent coords (localtoparent coords do not do anything for now, might be a conflict between LTW and LTP)
         }

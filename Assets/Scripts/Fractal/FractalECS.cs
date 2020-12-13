@@ -7,6 +7,7 @@ using Unity.Mathematics;
 
 public class FractalECS : MonoBehaviour
 {
+    #region Editor Serialization
     [SerializeField] private Mesh[] cubeMesh;
     [SerializeField] private Material material;
     [SerializeField] private int maxDepth;
@@ -15,33 +16,32 @@ public class FractalECS : MonoBehaviour
     [SerializeField] private bool rotation;
     [SerializeField] private bool weirdFractal;
     [SerializeField] public float radiansPerSecond;
+    #endregion
 
-    private Material[,] materials;
-
-    private float3 entityPosition;
-    private int amountOfEntities;
+    #region ECS basic elements
     private NativeArray<Entity> entityArray;
     private EntityArchetype entityArchetype;
     private EntityManager entityManager;
-
-    private int depth;
-    Entity parentScale;
-    Entity parent;
+    private Entity parentScale;
+    private Entity parent;
+    #endregion
     
+    #region Spawning Enitities
+    private const int CHILD_COUNT = 5;
+    private float3 newLoc;
+    private float4x4 loc;
+    private float3 entityPosition;
+    private int amountOfEntities;
+    private int depth;
+    private int directionIndex;
+    private quaternion startOrientation;
+    #endregion
 
-    int index;
-
-    float3 newLoc;
-
-    float4x4 loc;
-
-    private System.Random rand = new System.Random();
-
-    private float startTime;
-
-    private quaternion newQuaternion;
-
-    private static Vector3[] childDirections = {  // TO USE IN THE FUTURE
+    private Material[,] materials; // Color
+    private int entitiesCreated; // Indexing
+    private float startTime; // Debug StartupTime
+  
+    private static Vector3[] childDirections = {  // Iterative directions
         Vector3.right,
         Vector3.left,
         Vector3.up,
@@ -50,7 +50,7 @@ public class FractalECS : MonoBehaviour
         Vector3.back          
     };
 
-    private static quaternion[] childOrientations = {  // TO USE IN THE FUTURE
+    private static quaternion[] childOrientations = {  // Initial oritentation of cubes
         Quaternion.identity,
         Quaternion.Euler(0f, 0f, -90f),
         Quaternion.Euler(0f, 0f, 90f),
@@ -59,20 +59,19 @@ public class FractalECS : MonoBehaviour
         Quaternion.Euler(0f, 90f, 0f)
     };
 
-    //MOVE SOME OF THIS INTO AWAKE INSTEAD FOR A BIT BETTER OPTIMIZATION
     private void Start()
     {
-        amountOfEntities = (int)math.pow(5, maxDepth); // how many fractal children are spawned is 5^(maxDepth)
+        amountOfEntities = (int)math.pow(CHILD_COUNT, maxDepth); // how many fractal children are spawned is 5^(maxDepth)   
 
-        entityArray= new NativeArray<Entity>((int)amountOfEntities, Allocator.Temp); 
+        entityArray = new NativeArray<Entity>(amountOfEntities, Allocator.Temp); // Allocate nativeArray
 
         entityManager = World.Active.EntityManager;       
 
         // TRANSLATION, ROTATION AND SCALE CAN POSSIBLY BE DONE WITH JUST LOCALTOWORLD
           entityArchetype = entityManager.CreateArchetype(
-          typeof(FractalComponent), typeof(Rotation), //Component class, Rotation
+          typeof(FractalComponent), typeof(Rotation), // Custom Component class, Rotation
           typeof(RenderMesh), typeof(Translation),// Rendering, Location, Coords local to parent
-          typeof(LocalToWorld), typeof(Scale)  // Coordinate conversion, Scale, Parent
+          typeof(LocalToWorld), typeof(Scale)  // Coordinate conversion, Scale
           );
 
         startTime = Time.realtimeSinceStartup;
@@ -84,24 +83,22 @@ public class FractalECS : MonoBehaviour
 
         loc = new float4x4(float4.zero, float4.zero, float4.zero, new float4(entityPosition, 1)); // this.transform.position used for localtoworld, rotation values are set to zero for now        
                
-            CreateEntities(entityArchetype); // Call entity spawn method
-
-             
+        CreateEntities(entityArchetype); // Call entity spawn method           
         
         Debug.Log(("Startup Time: " + (Time.realtimeSinceStartup - startTime) * 1000f) + "ms"); // Start up time debug        
-    }
+    }    
 
     private void CreateEntities(EntityArchetype entityArchetype)
     {
-        float scale = 1;
+        float scale = 1; // Default scale
 
         entityManager.CreateEntity(entityArchetype, entityArray); // Entity spawn   
 
         for (int i = 0; i < amountOfEntities; i++)
         {
-            if (index > 5)
+            if (directionIndex > 5)
             {
-                index = 0; // Used as a direction indexer
+                directionIndex = 0; // Used as a direction indexer
             }
 
             Entity entity = entityArray[i]; // Entity is created and added to array 
@@ -111,14 +108,13 @@ public class FractalECS : MonoBehaviour
                 parent = entity;
                 parentScale = entity;
             }
-            else
+            else if (i % CHILD_COUNT == 0)
             {
-                parentScale = entityArray[i - 1];
-                parent = entityArray[i - 1];// If we reach the 5th entity, make a new parent for the next 5 entities      
+                parentScale = entityArray[i - CHILD_COUNT];
+                parent = entityArray[i];// If we reach the 5th entity, make it a parent
             }
-
-            if (i > 0)
-            {
+            else
+            {                    
                 scale = entityManager.GetComponentData<Scale>(parentScale).Value * childScale;
             }
 
@@ -127,14 +123,9 @@ public class FractalECS : MonoBehaviour
                 scale = childScale;
             }
 
-            InterpolateColor(i);
+            InterpolateColor(i); // Index color
 
-            //entityManager.SetComponentData(entity, new Translation
-            //{
-            //    Value = entityPosition // EntityPosition is this.transform.localposition
-            //});
-
-            entityManager.SetComponentData(entity, new FractalComponent
+            entityManager.SetComponentData(entity, new FractalComponent // Setting the values of my custom component
             {
                 radiansPerSecond = radiansPerSecond, // Fractals rotate at a rate of x radians per second
                 translation = new float3(childDirections[depth] * (0.5f + 0.5f * childScale)),
@@ -145,48 +136,34 @@ public class FractalECS : MonoBehaviour
 
             entityManager.SetComponentData(entity, new LocalToWorld
             {
-                Value = loc
+                Value = loc // Initialize localtoworld with default rotation at entityposition
             });
 
             newLoc = new float3(entityManager.GetComponentData<Translation>(parent).Value.x, entityManager.GetComponentData<Translation>(parent).Value.y,
                 entityManager.GetComponentData<Translation>(parent).Value.z);
-            
-            newLoc += new float3(childDirections[index].x, childDirections[index].y, childDirections[index].z) * (0.5f + 0.5f * childScale);
+
+            newLoc += new float3(childDirections[directionIndex].x, childDirections[directionIndex].y, childDirections[directionIndex].z) * (0.5f + 0.5f * childScale);
 
             if (!weirdFractal)
             {
                 entityManager.SetComponentData(entity, new Translation
                 {
-                    Value = newLoc
+                    Value = newLoc // Childs translation + iterative direction with regards to scale
                 });
             }
-            newQuaternion = entityManager.GetComponentData<Rotation>(parent).Value;
+            startOrientation = entityManager.GetComponentData<Rotation>(parent).Value;
 
-            newQuaternion.value = childOrientations[index].value;
-
-            //translationTemp = entityManager.GetComponentData<Translation>(parentDirection).Value + new float3(childDirections[index].x, childDirections[index].y, childDirections[index].z) * (0.5f + 0.5f * childScale);
-            //translationTemp = childDirections[index].y;
+            startOrientation.value = childOrientations[directionIndex].value;
 
             entityManager.SetComponentData(entity, new Rotation
             {
-                Value = newQuaternion
-                /*Value = math.mul(math.normalize(defaultQuaternion), quaternion.AxisAngle(Vector3.up, rand.Next(-maxTwist, maxTwist)))*/ // Sets a random twist at start
+                Value = startOrientation // Iterative rotation based on index
             });
 
             entityManager.SetComponentData(entity, new Scale
             {
                 Value = scale
             });
-
-            //entityManager.SetComponentData(entity, new Parent
-            //{
-            //    Value = parentDirection // Parent == entityArray[i-1]
-            //});
-
-            //entityManager.SetComponentData(entity, new LocalToParent
-            //{
-            //    Value = loc
-            //});
 
             entityManager.SetSharedComponentData(entity, new RenderMesh
             {
@@ -197,12 +174,10 @@ public class FractalECS : MonoBehaviour
 
             OffsetEntitySpawn(3); // Adds a gap of x units between each entity on the z axis                    
 
-            index++;
-            IterateDirections();
+            directionIndex++;
         }
         entityArray.Dispose(); // Empty native array since garbage collector does not handle it (IMPORTANT)
     }
-
     private void OffsetEntitySpawn(int amount)
     {
         entityPosition.z += amount;
@@ -233,128 +208,96 @@ public class FractalECS : MonoBehaviour
         }
     }
 
-    private void IterateDirections()
+    private void IterateDepth()
     {
-        childDirections[index] += childDirections[index];
+        if (entitiesCreated > amountOfEntities - depth) // Since we have 4 color segments, every 1/4 of the way we will increase depth, which shifts the color towards red/magenta
+            depth++;
     }
-
-
-    //private void CreateEntities(EntityArchetype entityArchetype)
-    //{
-    //    float scale = 1;
-
-    //    entityManager.CreateEntity(entityArchetype, entityArray); // Entity spawn   
-
-    //    for (int i = 0; i < amountOfEntities; i++)
-    //    {                      
-    //        if(index > 5)
-    //        {
-    //            index = 0; // Used as a direction indexer
-    //        }
-
-    //        Entity entity = entityArray[i]; // Entity is created and added to array 
-
-    //        if (i == 0)
-    //        {
-    //            parent = entity;
-    //            parentScale = entity;
-    //        }            
-    //        else if(i % 5 == 0)
-    //        {
-    //            parentScale = entityArray[i - 5];                         
-    //        }
-    //        else
-    //        {
-    //            parent = entityArray[i - 1];// If we reach the 5th entity, make a new parent for the next 5 entities      
-    //        }
-
-    //        if (i > 0)
-    //        {
-    //            scale = entityManager.GetComponentData<Scale>(parentScale).Value * childScale;
-    //        }
-
-    //        if(weirdFractal)
-    //        {
-    //            scale = childScale;
-    //        }
-
-    //        InterpolateColor(i);
-
-    //        //entityManager.SetComponentData(entity, new Translation
-    //        //{
-    //        //    Value = entityPosition // EntityPosition is this.transform.localposition
-    //        //});
-
-    //        entityManager.SetComponentData(entity, new FractalComponent
-    //        {
-    //            radiansPerSecond = radiansPerSecond, // Fractals rotate at a rate of x radians per second
-    //            translation = new float3(childDirections[index] * (0.5f + 0.5f * childScale)),
-    //            rotation = rotation,
-    //            weirdFractal = weirdFractal,
-    //            parent = parent                               
-    //        });
-
-    //        entityManager.SetComponentData(entity, new LocalToWorld
-    //        {
-    //            Value = loc
-    //        });           
-
-    //        newLoc = new float3(entityManager.GetComponentData<Translation>(parent).Value.x, entityManager.GetComponentData<Translation>(parent).Value.y, 
-    //            entityManager.GetComponentData<Translation>(parent).Value.z);
-    //        Vector3 aaa = new Vector3(childDirections[index].x, childDirections[index].y, childDirections[index].z);
-    //        newLoc += new float3(childDirections[index].x, childDirections[index].y, childDirections[index].z);
-
-    //        if (!weirdFractal)
-    //        {
-    //            entityManager.SetComponentData(entity, new Translation
-    //            {
-    //                Value = newLoc
-    //            });
-    //        }
-    //        newQuaternion = entityManager.GetComponentData<Rotation>(parent).Value;
-
-    //        newQuaternion.value = childOrientations[index].value;
-
-    //        //translationTemp = entityManager.GetComponentData<Translation>(parentDirection).Value + new float3(childDirections[index].x, childDirections[index].y, childDirections[index].z) * (0.5f + 0.5f * childScale);
-    //        //translationTemp = childDirections[index].y;
-
-    //        entityManager.SetComponentData(entity, new Rotation
-    //        {
-    //            Value = newQuaternion
-    //            /*Value = math.mul(math.normalize(defaultQuaternion), quaternion.AxisAngle(Vector3.up, rand.Next(-maxTwist, maxTwist)))*/ // Sets a random twist at start
-    //        });
-
-    //        entityManager.SetComponentData(entity, new Scale
-    //        {
-    //            Value = scale
-    //        });
-
-    //        //entityManager.SetComponentData(entity, new Parent
-    //        //{
-    //        //    Value = parentDirection // Parent == entityArray[i-1]
-    //        //});
-
-    //        //entityManager.SetComponentData(entity, new LocalToParent
-    //        //{
-    //        //    Value = loc
-    //        //});
-
-    //        entityManager.SetSharedComponentData(entity, new RenderMesh
-    //        {
-    //            mesh = cubeMesh[UnityEngine.Random.Range(0, cubeMesh.Length)], // Sets mesh to random out of the serialized list
-    //            material = materials[depth, UnityEngine.Random.Range(0, 2)] // Sets material to random out of the serialized list
-    //        }
-    //        );
-
-    //        OffsetEntitySpawn(3); // Adds a gap of x units between each entity on the z axis                    
-
-    //        index++;
-    //    }      
-    //    entityArray.Dispose(); // Empty native array since garbage collector does not handle it (IMPORTANT)
-    //}
 }
 
 
+//private void CreateEntities(EntityArchetype entityArchetype)
+//{
+//    float scale = 1;
+
+//    entityArray = new NativeArray<Entity>(CHILD_COUNT+1, Allocator.Temp);
+//    entitiesCreated += CHILD_COUNT + 1;
+//    entityManager.CreateEntity(entityArchetype, entityArray); // Entity spawn   
+
+//    // 
+//    for (int i = 0; i < CHILD_COUNT+1; i++)
+//    {
+//        Entity entity = entityArray[i]; // Entity is created and added to array 
+
+//        if (directionIndex > CHILD_COUNT)
+//        {
+//            directionIndex = 0; // Used as a direction indexer
+//        }
+
+//        if (i == 0)
+//        {
+//            parent = entity;
+//            parentScale = entity;
+//        }
+//        else if (i % CHILD_COUNT == 0)
+//        {
+//            parentScale = entityArray[i - CHILD_COUNT];
+//        }
+//        else
+//        {
+//            //parent = entityArray[i - 1];// If we reach the 5th entity, make a new parent for the next 5 entities      
+//            scale = entityManager.GetComponentData<Scale>(parentScale).Value * childScale;
+//        }
+
+//        //InterpolateColor(i);
+
+//        entityManager.SetComponentData(entity, new FractalComponent
+//        {
+//            radiansPerSecond = radiansPerSecond, // Fractals rotate at a rate of x radians per second
+//            translation = new float3(childDirections[directionIndex] * (0.5f + 0.5f * childScale)),
+//            rotation = rotation,
+//            weirdFractal = weirdFractal,
+//            parent = parent
+//        });
+
+//        entityManager.SetComponentData(entity, new LocalToWorld
+//        {
+//            Value = loc
+//        });
+
+//        newLoc = new float3(entityManager.GetComponentData<Translation>(parent).Value.x, entityManager.GetComponentData<Translation>(parent).Value.y,
+//            entityManager.GetComponentData<Translation>(parent).Value.z) + new float3(childDirections[directionIndex].x, childDirections[directionIndex].y, childDirections[directionIndex].z); // *(0.5f + 0.5f * childScale) 
 
 
+//        entityManager.SetComponentData(entity, new Translation
+//        {
+//            Value = newLoc
+//        });
 
+//        newQuaternion = entityManager.GetComponentData<Rotation>(parent).Value;
+
+//        newQuaternion.value = childOrientations[directionIndex].value;
+
+//        entityManager.SetComponentData(entity, new Rotation
+//        {
+//            Value = newQuaternion
+//        });
+
+//        entityManager.SetComponentData(entity, new Scale
+//        {
+//            Value = scale
+//        });
+
+//        entityManager.SetSharedComponentData(entity, new RenderMesh
+//        {
+//            mesh = cubeMesh[UnityEngine.Random.Range(0, cubeMesh.Length)], // Sets mesh to random out of the serialized list
+//            material = materials[depth, UnityEngine.Random.Range(0, 2)] // Sets material to random out of the serialized list
+//        }
+//        );
+
+//        OffsetEntitySpawn(3); // Adds a gap of x units between each entity on the z axis                    
+
+//        directionIndex++;            
+//    }
+//    IterateDepth();
+//}
